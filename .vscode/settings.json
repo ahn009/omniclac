@@ -1,0 +1,23 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.experimental.classRegex": [
+    "tw`([^`]*)", // tw`...`
+    "className=\"([^\"]*)\"", // className="..."
+    "className='([^']*)'", // className='...'
+    "className=\\{([^\\}]*)\\}", // className={...}
+    "tw\\.\\w+\\s*`([^`]*)", // tw.xxx`...`
+    "tw\\(.*?\\)\\s*`([^`]*)" // tw(Component)`...`
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}

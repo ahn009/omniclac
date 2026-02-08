@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --transition-theme: 200ms ease-in-out;
+  }
+
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  * {
+    transition: background-color var(--transition-theme), 
+                border-color var(--transition-theme), 
+                color var(--transition-theme);
+  }
+
+  body {
+    @apply antialiased text-slate-900 dark:text-slate-100 
+           bg-gradient-to-br from-slate-50 via-white to-slate-100 
+           dark:from-slate-950 dark:via-slate-900 dark:to-slate-950;
+  }
+
+  ::selection {
+    @apply bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900;
+  }
+
+  input, select, textarea {
+    @apply outline-none;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md 
+           border border-slate-200/60 dark:border-slate-700/60 
+           shadow-lg dark:shadow-slate-950/50;
+  }
+
+  .page-shell {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply text-xl sm:text-2xl font-bold tracking-tight 
+           text-slate-900 dark:text-slate-100;
+  }
+
+  .section-subtitle {
+    @apply text-sm sm:text-base text-slate-600 dark:text-slate-400;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-800;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+}
