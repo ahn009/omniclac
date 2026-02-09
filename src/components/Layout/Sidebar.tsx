@@ -92,10 +92,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-80",
+          "fixed top-0 left-0 z-50 h-screen w-80",
           "bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700",
           "transform transition-transform duration-300 ease-in-out",
-          "lg:translate-x-0 lg:static lg:h-auto lg:z-auto",
+          "lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
         aria-label="Tools navigation"
