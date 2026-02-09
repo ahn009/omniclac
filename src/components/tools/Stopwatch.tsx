@@ -102,12 +102,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
     )}
     {description && (
-      <p className="text-slate-600 mb-6">{description}</p>
+      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
     )}
     {children}
   </div>
@@ -129,9 +129,9 @@ const getVariantClasses = (variant: ButtonProps['variant']): string => {
     case 'danger':
       return 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md shadow-red-500/50';
     case 'outline':
-      return 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 active:bg-slate-200';
+      return 'bg-white text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
     case 'ghost':
-      return 'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200';
+      return 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
     default:
       return '';
   }
@@ -219,7 +219,7 @@ export const Stopwatch: React.FC = () => {
       <Card title="Stopwatch" description="Measure elapsed time with lap recording.">
         <div className="text-center mb-8">
           <div 
-            className="text-6xl font-light font-mono text-slate-900 mb-2"
+            className="text-6xl font-light font-mono text-slate-900 dark:text-slate-100 mb-2"
             role="timer"
             aria-live="polite"
             aria-atomic="true"
@@ -228,7 +228,7 @@ export const Stopwatch: React.FC = () => {
           </div>
           {laps.length > 0 && (
             <div className="text-xl font-light font-mono text-slate-600">
-              <span className="text-sm font-semibold text-slate-500 mr-2">Lap Time:</span> 
+              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 mr-2">Lap Time:</span> 
               {formatTime(timeSinceLastLap)}
             </div>
           )}
@@ -263,12 +263,12 @@ export const Stopwatch: React.FC = () => {
 
       {laps.length > 0 && (
         <Card className="mt-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Lap Records</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">Lap Records</h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {laps.map((lap, index) => (
               <div
                 key={lap.id}
-                className="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-lg"
+                className="flex items-center justify-between py-3 px-4 bg-slate-50 dark:bg-slate-800 rounded-lg"
               >
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 flex items-center justify-center bg-slate-200 rounded-full text-sm font-medium">

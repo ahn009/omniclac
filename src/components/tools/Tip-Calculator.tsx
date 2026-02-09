@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
     )}
     {description && (
-      <p className="text-slate-600 mb-6">{description}</p>
+      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
     )}
     {children}
   </div>
@@ -42,7 +42,7 @@ const Input: React.FC<InputProps> = ({ label, icon: Icon, className, ...props })
         <input
           {...props}
           id={props.id || label.toLowerCase().replace(/\s/g, '-')}
-          className={`block w-full rounded-lg border-slate-300 border py-2 px-3 focus:border-blue-500 focus:ring-blue-500 text-base placeholder-slate-400 text-slate-900 transition duration-150 ${Icon ? 'pl-10' : 'pl-3'} ${className}`}
+          className={`block w-full rounded-lg border-slate-300 dark:border-slate-600 border py-2 px-3 focus:border-blue-500 focus:ring-blue-500 text-base placeholder-slate-400 text-slate-900 dark:text-slate-100 transition duration-150 ${Icon ? 'pl-10' : 'pl-3'} ${className}`}
         />
       </div>
     </div>
@@ -64,9 +64,9 @@ const getVariantClasses = (variant: ButtonProps['variant']): string => {
     case 'danger':
       return 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md shadow-red-500/50';
     case 'outline':
-      return 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 active:bg-slate-200';
+      return 'bg-white text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
     case 'ghost':
-      return 'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200';
+      return 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
     default:
       return '';
   }
@@ -144,7 +144,7 @@ export const TipCalculator: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-3">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
               Tip Percentage: <span className="font-bold text-slate-900">{tipPercentage}%</span>
             </label>
             <input
@@ -188,7 +188,7 @@ export const TipCalculator: React.FC = () => {
             />
           </div>
 
-          <div className="pt-6 border-t border-slate-200 space-y-4">
+          <div className="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Bill Amount</span>
               <span className="text-lg font-medium text-slate-900">

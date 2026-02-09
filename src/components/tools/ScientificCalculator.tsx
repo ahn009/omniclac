@@ -12,9 +12,9 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white shadow-xl rounded-xl p-6 ${className}`}>
-    {title && <h2 className="text-xl font-semibold text-slate-900 mb-2">{title}</h2>}
-    {description && <p className="text-sm text-slate-500 mb-4">{description}</p>}
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
+    {title && <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>}
+    {description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>}
     {children}
   </div>
 );
@@ -36,7 +36,7 @@ const CalculatorButton: React.FC<CalculatorButtonProps> = ({
   <button
     onClick={onClick}
     title={title}
-    className={`p-4 text-xl font-light bg-slate-100 text-slate-900 rounded-lg hover:bg-slate-200 transition duration-100 active:bg-slate-300 ${className}`}
+    className={`p-4 text-xl font-light bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg hover:bg-slate-200 transition duration-100 active:bg-slate-300 ${className}`}
   >
     {children}
   </button>
@@ -263,7 +263,7 @@ export const ScientificCalculator: React.FC = () => {
       <Card className="p-4 sm:p-6 space-y-4">
         {/* Display and History */}
         <div className="text-right">
-          <div className="flex justify-between items-center text-xs text-slate-500 mb-1">
+          <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>{isDeg ? 'DEG' : 'RAD'}</span>
             {history.length > 0 && (
               <span className="max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
@@ -273,13 +273,13 @@ export const ScientificCalculator: React.FC = () => {
           </div>
           
           <div 
-            className="text-4xl font-light text-slate-900 overflow-x-auto whitespace-nowrap [direction:rtl]"
+            className="text-4xl font-light text-slate-900 dark:text-slate-100 overflow-x-auto whitespace-nowrap [direction:rtl]"
             style={{ minHeight: '48px' }}
           >
             {display}
           </div>
           {operator && prevValue !== null && (
-            <div className="text-sm text-slate-400 mt-1">
+            <div className="text-sm text-slate-400 dark:text-slate-500 mt-1">
               {prevValue} {operator}
             </div>
           )}

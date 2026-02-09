@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white shadow-xl rounded-xl p-6 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-1">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
     )}
     {description && (
-      <p className="text-sm text-slate-500 mb-4">{description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
     )}
     {children}
   </div>
@@ -39,7 +39,7 @@ const Input: React.FC<InputProps> = ({ label, icon: Icon, ...props }) => (
         </div>
       )}
       <input
-        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
+        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 dark:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
         {...props}
       />
     </div>
@@ -62,11 +62,11 @@ const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', si
     case 'primary':
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
     case 'outline':
-      return `${base} bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 ${sizeClasses}`;
+      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
     case 'danger':
       return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
     case 'ghost':
-      return `${base} text-slate-700 hover:bg-slate-100 ${sizeClasses}`;
+      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
     default:
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
   }
@@ -282,21 +282,21 @@ export const MortgageCalculator: React.FC = () => {
           <Card title="Payment Results" description="Summary of your monthly payments and total cost.">
             <div className="space-y-6">
               <div className="text-center py-4 bg-blue-50 rounded-xl border border-blue-200">
-                <div className="text-sm text-slate-600 mb-1">Estimated Monthly Payment</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Estimated Monthly Payment</div>
                 <div className="text-5xl font-extralight text-slate-900">
                   {formatCurrency(results.monthlyPayment)}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-50 rounded-lg">
-                  <div className="text-sm text-slate-500 mb-1">Total Principal</div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                  <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">Total Principal</div>
                   <div className="text-xl font-medium text-slate-900">
                     {formatCurrency(parseFloat(formData.loanAmount))}
                   </div>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-lg">
-                  <div className="text-sm text-slate-500 mb-1">Total Interest Paid</div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                  <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">Total Interest Paid</div>
                   <div className="text-xl font-medium text-slate-900">
                     {formatCurrency(results.totalInterest)}
                   </div>
@@ -304,36 +304,36 @@ export const MortgageCalculator: React.FC = () => {
               </div>
 
               <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                <div className="text-sm text-slate-600 mb-1">Overall Total Cost</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Overall Total Cost</div>
                 <div className="text-2xl font-bold text-slate-900">
                   {formatCurrency(results.totalCost)}
                 </div>
               </div>
               
-              <div className="border-t border-slate-200 pt-6">
-                <h4 className="font-medium text-slate-900 mb-3">Amortization Snapshot (First 5 Months)</h4>
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+                <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-3">Amortization Snapshot (First 5 Months)</h4>
                 <div className="space-y-2 max-h-52 overflow-y-auto">
                   {results.amortization.slice(0, 5).map((month) => (
                     <div
                       key={month.month}
                       className="flex justify-between items-center text-sm py-1 border-b border-dashed border-slate-100 last:border-b-0"
                     >
-                      <span className="text-slate-600 font-mono w-10">M{month.month}</span>
+                      <span className="text-slate-600 dark:text-slate-400 font-mono w-10">M{month.month}</span>
                       <div className="flex gap-4">
                         <span className="text-slate-900">
                           P: {formatCurrency(month.principal)}
                         </span>
-                        <span className="text-slate-500 text-xs">
+                        <span className="text-slate-500 dark:text-slate-400 text-xs">
                           I: {formatCurrency(month.interest)}
                         </span>
-                        <span className="text-slate-700 font-medium">
+                        <span className="text-slate-700 dark:text-slate-300 font-medium">
                           Bal: {formatCurrency(month.remainingBalance)}
                         </span>
                       </div>
                     </div>
                   ))}
                   {results.amortization.length > 5 && (
-                    <div className="text-center text-slate-500 text-xs pt-2">
+                    <div className="text-center text-slate-500 dark:text-slate-400 text-xs pt-2">
                       ... {results.amortization.length - 5} more payments
                     </div>
                   )}

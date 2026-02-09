@@ -9,12 +9,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
     )}
     {description && (
-      <p className="text-slate-600 mb-6">{description}</p>
+      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
     )}
     {children}
   </div>
@@ -31,7 +31,7 @@ const CalculatorButton: React.FC<CalculatorButtonProps> = ({ onClick, children, 
   <button
     onClick={onClick}
     disabled={disabled}
-    className={`p-4 text-2xl font-semibold rounded-xl transition duration-150 ease-in-out bg-slate-100 text-slate-900 hover:bg-slate-200 active:bg-slate-300 shadow-md ${className}`}
+    className={`p-4 text-2xl font-semibold rounded-xl transition duration-150 ease-in-out bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 active:bg-slate-300 shadow-md ${className}`}
   >
     {children}
   </button>
@@ -180,11 +180,11 @@ export const StandardCalculator: React.FC = () => {
   return (
     <div className="max-w-sm mx-auto p-4 md:p-6">
       <Card className="p-0 overflow-hidden shadow-2xl">
-        <div className="p-6 bg-slate-50 border-b border-slate-200">
-          <div className="text-sm font-medium text-slate-500 h-5 mb-1">
+        <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
+          <div className="text-sm font-medium text-slate-500 dark:text-slate-400 h-5 mb-1">
             {prevValue !== null && operator ? `${formatDisplay(prevValue)} ${operator}` : ''}
           </div>
-          <div className="text-5xl font-light text-slate-900 text-right overflow-x-auto whitespace-nowrap min-h-[60px] flex items-center justify-end" role="log" aria-live="assertive">
+          <div className="text-5xl font-light text-slate-900 dark:text-slate-100 text-right overflow-x-auto whitespace-nowrap min-h-[60px] flex items-center justify-end" role="log" aria-live="assertive">
             {display}
           </div>
         </div>
@@ -251,7 +251,7 @@ export const StandardCalculator: React.FC = () => {
           </CalculatorButton>
         </div>
 
-        <div className="mt-2 text-xs text-slate-500 text-center pb-4 px-4">
+        <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 text-center pb-4 px-4">
           <p>Keyboard support: 0-9, +, -, *, /, Enter(=), Escape(AC), Backspace</p>
         </div>
       </Card>

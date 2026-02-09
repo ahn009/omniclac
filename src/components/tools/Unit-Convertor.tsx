@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white shadow-xl rounded-xl p-6 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-1">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
     )}
     {description && (
-      <p className="text-sm text-slate-500 mb-4">{description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
     )}
     {children}
   </div>
@@ -39,7 +39,7 @@ const Input: React.FC<InputProps> = ({ label, icon: Icon, ...props }) => (
         </div>
       )}
       <input
-        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
+        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 dark:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
         {...props}
       />
     </div>
@@ -62,11 +62,11 @@ const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', si
     case 'primary':
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
     case 'outline':
-      return `${base} bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 ${sizeClasses}`;
+      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
     case 'danger':
       return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
     case 'ghost':
-      return `${base} text-slate-700 hover:bg-slate-100 ${sizeClasses}`;
+      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
     default:
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
   }
@@ -192,7 +192,7 @@ export const UnitConverter: React.FC = () => {
       >
         <div className="space-y-6">
           {/* Category Selection */}
-          <div className="flex justify-around bg-slate-100 p-2 rounded-xl">
+          <div className="flex justify-around bg-slate-100 dark:bg-slate-800 p-2 rounded-xl">
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (
@@ -201,8 +201,8 @@ export const UnitConverter: React.FC = () => {
                   onClick={() => handleCategoryChange(cat.id)}
                   className={`flex items-center justify-center gap-2 flex-1 py-2 text-sm font-semibold rounded-lg transition duration-150 ${
                     cat.id === category
-                      ? 'text-blue-600 bg-white shadow'
-                      : 'text-slate-600 hover:bg-slate-200'
+                      ? 'text-blue-600 bg-white dark:bg-slate-900 shadow'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -231,7 +231,7 @@ export const UnitConverter: React.FC = () => {
               <select
                 value={fromUnit}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFromUnit(e.target.value)}
-                className="block w-full rounded-lg border-0 py-2.5 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition duration-150"
+                className="block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150"
               >
                 {unitsByCategory[category].map((unit) => (
                   <option key={unit} value={unit}>
@@ -255,12 +255,12 @@ export const UnitConverter: React.FC = () => {
           {/* Converted Value Display */}
           <div className="pt-6 border-t border-slate-200">
             <div className="text-center bg-blue-50 p-4 rounded-xl border border-blue-200">
-              <div className="text-sm text-slate-600 mb-2">Result in {toUnit.charAt(0).toUpperCase() + toUnit.slice(1)}</div>
-              <div className="text-5xl font-extralight font-mono text-slate-900 mb-2">
+              <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">Result in {toUnit.charAt(0).toUpperCase() + toUnit.slice(1)}</div>
+              <div className="text-5xl font-extralight font-mono text-slate-900 dark:text-slate-100 mb-2">
                 {convertValue}
               </div>
             </div>
-            <div className="mt-4 text-sm text-slate-600 text-center">
+            <div className="mt-4 text-sm text-slate-600 dark:text-slate-400 text-center">
               <p>
                 {value || '0'} {fromUnit} = {convertValue || '0'} {toUnit}
               </p>

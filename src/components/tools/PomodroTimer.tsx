@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white shadow-xl rounded-xl p-6 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-1">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
     )}
     {description && (
-      <p className="text-sm text-slate-500 mb-4">{description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
     )}
     {children}
   </div>
@@ -37,11 +37,11 @@ const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', si
     case 'primary':
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
     case 'outline':
-      return `${base} bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 ${sizeClasses}`;
+      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
     case 'danger':
       return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
     case 'ghost':
-      return `${base} text-slate-700 hover:bg-slate-100 ${sizeClasses}`;
+      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
     default:
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
   }
@@ -252,15 +252,15 @@ export const PomodoroTimer: React.FC = () => {
       >
         <div className="space-y-8">
           {/* Mode Selection */}
-          <div className="flex justify-around bg-slate-100 p-2 rounded-xl">
+          <div className="flex justify-around bg-slate-100 dark:bg-slate-800 p-2 rounded-xl">
             {MODES.map((modeOption) => (
               <button
                 key={modeOption.id}
                 onClick={() => handleModeChange(modeOption)}
                 className={`flex-1 py-2 text-sm font-semibold rounded-lg transition duration-150 ${
                   modeOption.id === mode.id
-                    ? `${modeOption.color.replace('bg-', 'text-')} bg-white shadow`
-                    : 'text-slate-600 hover:bg-slate-200'
+                    ? `${modeOption.color.replace('bg-', 'text-')} bg-white dark:bg-slate-900 shadow`
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                 }`}
               >
                 {modeOption.name}
@@ -296,7 +296,7 @@ export const PomodoroTimer: React.FC = () => {
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
               <mode.icon className={`w-8 h-8 ${mode.color.replace('bg-', 'text-')}`} />
-              <div className="text-8xl font-light font-mono text-slate-900 leading-none mt-2">
+              <div className="text-8xl font-light font-mono text-slate-900 dark:text-slate-100 leading-none mt-2">
                 {formatTime(remainingTime)}
               </div>
               <div className={`text-xl font-semibold mt-2 ${mode.color.replace('bg-', 'text-')}`}>
@@ -325,9 +325,9 @@ export const PomodoroTimer: React.FC = () => {
         </div>
 
         {/* Status/Summary */}
-        <div className="border-t border-slate-200 pt-6 mt-6">
+        <div className="border-t border-slate-200 dark:border-slate-700 pt-6 mt-6">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-slate-700 font-medium">Completed Work Sessions:</span>
+            <span className="text-slate-700 dark:text-slate-300 font-medium">Completed Work Sessions:</span>
             <span className="text-3xl font-bold text-blue-600">{completedSessions}</span>
           </div>
           

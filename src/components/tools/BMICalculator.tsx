@@ -10,12 +10,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white shadow-xl rounded-xl p-6 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-1">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
     )}
     {description && (
-      <p className="text-sm text-slate-500 mb-4">{description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
     )}
     {children}
   </div>
@@ -39,7 +39,7 @@ const Input: React.FC<InputProps> = ({ label, icon: Icon, ...props }) => (
         </div>
       )}
       <input
-        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
+        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 dark:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
         {...props}
       />
     </div>
@@ -62,11 +62,11 @@ const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', si
     case 'primary':
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
     case 'outline':
-      return `${base} bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 ${sizeClasses}`;
+      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
     case 'danger':
       return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
     case 'ghost':
-      return `${base} text-slate-700 hover:bg-slate-100 ${sizeClasses}`;
+      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
     default:
       return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
   }
@@ -139,13 +139,13 @@ export const BMICalculator: React.FC = () => {
       >
         <div className="space-y-6">
           <div className="flex justify-center mb-4">
-            <div className="inline-flex rounded-lg shadow-sm bg-slate-100 p-1">
+            <div className="inline-flex rounded-lg shadow-sm bg-slate-100 dark:bg-slate-800 p-1">
               <button
                 onClick={() => handleUnitChange('metric')}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition ${
                   unit === 'metric'
                     ? 'bg-white text-blue-600 shadow'
-                    : 'text-slate-600 hover:text-blue-600'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-blue-600'
                 }`}
               >
                 Metric (kg, cm)
@@ -155,7 +155,7 @@ export const BMICalculator: React.FC = () => {
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition ${
                   unit === 'imperial'
                     ? 'bg-white text-blue-600 shadow'
-                    : 'text-slate-600 hover:text-blue-600'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-blue-600'
                 }`}
               >
                 Imperial (lb, in)
@@ -196,14 +196,14 @@ export const BMICalculator: React.FC = () => {
           </Button>
 
           {bmi !== null && category && (
-            <div className={`pt-6 border-t border-slate-200 text-center rounded-xl p-4 ${category.bg} border`}>
-              <div className="text-sm text-slate-600 mb-1">Your BMI</div>
-              <div className="text-6xl font-extralight text-slate-900 mb-2">{bmi}</div>
+            <div className={`pt-6 border-t border-slate-200 dark:border-slate-700 text-center rounded-xl p-4 ${category.bg} border`}>
+              <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Your BMI</div>
+              <div className="text-6xl font-extralight text-slate-900 dark:text-slate-100 mb-2">{bmi}</div>
               <div className={`text-xl font-semibold ${category.color} mb-4`}>
                 {category.text}
               </div>
               
-              <div className="text-sm text-slate-600 pt-4 border-t border-slate-300">
+              <div className="text-sm text-slate-600 dark:text-slate-400 pt-4 border-t border-slate-300">
                 <p className="font-semibold mb-2">BMI Categories:</p>
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="text-blue-600">Underweight: &lt;18.5</div>

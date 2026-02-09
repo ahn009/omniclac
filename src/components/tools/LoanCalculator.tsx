@@ -63,12 +63,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
+  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
     {title && (
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
     )}
     {description && (
-      <p className="text-slate-600 mb-6">{description}</p>
+      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
     )}
     {children}
   </div>
@@ -99,7 +99,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, min = 0
   return (
     <div className="mb-6">
       {/* FIXED: Removed conflicting 'block' class (flex already handles display) */}
-      <label className="text-sm font-medium text-slate-700 mb-1 flex justify-between">
+      <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 flex justify-between">
         <span>{label}</span>
         <span className="font-semibold text-slate-900">{value.toLocaleString()} {unit}</span>
       </label>
@@ -120,7 +120,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, min = 0
           step={step}
           value={value}
           onChange={handleTextChange}
-          className="w-24 p-2 border border-slate-300 rounded-lg text-right focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+          className="w-24 p-2 border border-slate-300 dark:border-slate-600 rounded-lg text-right focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
         />
       </div>
     </div>
@@ -278,7 +278,7 @@ export const LoanCalculator: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <Card
           title="Mortgage & Loan Calculator"
@@ -330,22 +330,22 @@ export const LoanCalculator: React.FC = () => {
 
             {/* Amortization Summary */}
             <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-4 bg-slate-100 rounded-lg border border-slate-200">
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200">
                 <p className="text-sm font-medium text-slate-600">Total Repayment</p>
-                <p className="text-xl font-bold text-slate-700 mt-1">
+                <p className="text-xl font-bold text-slate-700 dark:text-slate-300 mt-1">
                   {formatCurrency(totalRepayment)}
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-100 rounded-lg border border-slate-200">
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200">
                 <p className="text-sm font-medium text-slate-600">Total Interest Paid</p>
-                <p className="text-xl font-bold text-slate-700 mt-1">
+                <p className="text-xl font-bold text-slate-700 dark:text-slate-300 mt-1">
                   {formatCurrency(totalInterest)}
                 </p>
               </div>
             </div>
             
-            <p className="text-xs text-slate-500 mt-4 text-center">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">
                 This calculation uses the standard amortization formula for fixed-rate loans.
             </p>
           </div>
@@ -365,18 +365,18 @@ export const LoanCalculator: React.FC = () => {
             </button>
 
             {/* Analysis Output */}
-            <div className="mt-4 p-4 border border-slate-200 rounded-lg bg-white shadow-inner">
+            <div className="mt-4 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 shadow-inner">
               {error && <p className="text-red-600 font-medium">{error}</p>}
               
               {analysisResult ? (
                 <div>
                   <h4 className="text-lg font-bold text-indigo-700 mb-2">Financial Analyst Report</h4>
-                  <p className="text-slate-700 whitespace-pre-wrap">{analysisResult.text}</p>
+                  <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{analysisResult.text}</p>
                   
                   {analysisResult.sources.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-xs font-semibold text-slate-600 mb-1">Sources (Grounding):</p>
-                      <ul className="list-disc list-inside text-xs text-slate-500 space-y-1 ml-4">
+                      <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Sources (Grounding):</p>
+                      <ul className="list-disc list-inside text-xs text-slate-500 dark:text-slate-400 space-y-1 ml-4">
                         {analysisResult.sources.map((source, index) => (
                           <li key={index} className="truncate">
                             <a href={source.uri} target="_blank" rel="noopener noreferrer" className="hover:underline text-indigo-500">
@@ -389,7 +389,7 @@ export const LoanCalculator: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <p className="text-slate-500 italic">Click the button above to get a market-aware analysis of your loan terms.</p>
+                <p className="text-slate-500 dark:text-slate-400 italic">Click the button above to get a market-aware analysis of your loan terms.</p>
               )}
             </div>
           </div>
