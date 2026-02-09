@@ -1,48 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Divide, X, Minus, Plus, Percent, Play, Maximize2 } from 'lucide-react';
-
-// --- START: Inlined Common Components/Utilities for runnability ---
-
-// Stand-in for common/Card
-interface CardProps {
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
-  className?: string;
-}
-
-const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
-    {title && <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>}
-    {description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>}
-    {children}
-  </div>
-);
-
-// Custom button specifically for the calculator grid
-interface CalculatorButtonProps {
-  children: React.ReactNode;
-  onClick: () => void;
-  className?: string;
-  title?: string;
-}
-
-const CalculatorButton: React.FC<CalculatorButtonProps> = ({ 
-  children, 
-  onClick, 
-  className = '', 
-  title 
-}) => (
-  <button
-    onClick={onClick}
-    title={title}
-    className={`p-4 text-xl font-light bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg hover:bg-slate-200 transition duration-100 active:bg-slate-300 ${className}`}
-  >
-    {children}
-  </button>
-);
-
-// --- END: Inlined Common Components/Utilities for runnability ---
+import { Card, Button } from '../common/CommonComponents';
 
 export const ScientificCalculator: React.FC = () => {
   const [display, setDisplay] = useState<string>('0');
@@ -288,126 +246,134 @@ export const ScientificCalculator: React.FC = () => {
         {/* Calculator Grid */}
         <div className="grid grid-cols-5 gap-2">
           {/* Row 1: Functions */}
-          <CalculatorButton 
+          <Button 
             onClick={() => setIsDeg(prev => !prev)}
-            className={isDeg ? "bg-blue-200 text-blue-800" : "bg-slate-200 text-slate-800"}
+            variant={isDeg ? "primary" : "outline"}
+            className="p-4 text-xl font-light"
             title="Toggle Degrees/Radians"
           >
             {isDeg ? 'DEG' : 'RAD'}
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('x^2')} title="Square">
+          </Button>
+          <Button onClick={() => performFunction('x^2')} variant="outline" className="p-4 text-xl font-light" title="Square">
             x²
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('1/x')} title="Inverse">
+          </Button>
+          <Button onClick={() => performFunction('1/x')} variant="outline" className="p-4 text-xl font-light" title="Inverse">
             1/x
-          </CalculatorButton>
-          <CalculatorButton 
+          </Button>
+          <Button 
             onClick={clearAll}
-            className="bg-red-200 text-red-800 hover:bg-red-300 col-span-2"
+            variant="danger"
+            className="col-span-2 p-4 text-xl font-light"
           >
             AC
-          </CalculatorButton>
+          </Button>
 
           {/* Row 2: Trig and Advanced Ops */}
-          <CalculatorButton onClick={() => performFunction('sin')} title="Sine">
+          <Button onClick={() => performFunction('sin')} variant="outline" className="p-4 text-xl font-light" title="Sine">
             sin
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('cos')} title="Cosine">
+          </Button>
+          <Button onClick={() => performFunction('cos')} variant="outline" className="p-4 text-xl font-light" title="Cosine">
             cos
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('tan')} title="Tangent">
+          </Button>
+          <Button onClick={() => performFunction('tan')} variant="outline" className="p-4 text-xl font-light" title="Tangent">
             tan
-          </CalculatorButton>
-          <CalculatorButton onClick={toggleSign} title="Change Sign">
+          </Button>
+          <Button onClick={toggleSign} variant="outline" className="p-4 text-xl font-light" title="Change Sign">
             +/-
-          </CalculatorButton>
-          <CalculatorButton 
+          </Button>
+          <Button 
             onClick={() => performOperation('÷')}
-            className="bg-orange-400 text-white hover:bg-orange-500"
+            variant="primary"
+            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
             title="Divide"
           >
             <Divide size={20} className="mx-auto" />
-          </CalculatorButton>
+          </Button>
 
           {/* Row 3: Log, Constants, and Numbers 7, 8, 9 */}
-          <CalculatorButton onClick={() => performFunction('log')} title="Log Base 10">
+          <Button onClick={() => performFunction('log')} variant="outline" className="p-4 text-xl font-light" title="Log Base 10">
             log
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('ln')} title="Natural Log">
+          </Button>
+          <Button onClick={() => performFunction('ln')} variant="outline" className="p-4 text-xl font-light" title="Natural Log">
             ln
-          </CalculatorButton>
-          <CalculatorButton onClick={() => inputConstant('Pi')} title="Pi">
+          </Button>
+          <Button onClick={() => inputConstant('Pi')} variant="outline" className="p-4 text-xl font-light" title="Pi">
             <Play size={20} className="mx-auto" />
-          </CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('7')}>7</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('8')}>8</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('9')}>9</CalculatorButton>
-          <CalculatorButton 
+          </Button>
+          <Button onClick={() => inputDigit('7')} variant="outline" className="p-4 text-xl font-light">7</Button>
+          <Button onClick={() => inputDigit('8')} variant="outline" className="p-4 text-xl font-light">8</Button>
+          <Button onClick={() => inputDigit('9')} variant="outline" className="p-4 text-xl font-light">9</Button>
+          <Button 
             onClick={() => performOperation('×')}
-            className="bg-orange-400 text-white hover:bg-orange-500"
+            variant="primary"
+            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
             title="Multiply"
           >
             <X size={20} className="mx-auto" />
-          </CalculatorButton>
+          </Button>
 
           {/* Row 4: Power, Root, and Numbers 4, 5, 6 */}
-          <CalculatorButton onClick={() => performOperation('y^x')} title="Power">
+          <Button onClick={() => performOperation('y^x')} variant="outline" className="p-4 text-xl font-light" title="Power">
             <Maximize2 size={16} className="inline mr-1" />
             <span className='text-base'>^</span>
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performOperation('y√x')} title="Nth Root">
+          </Button>
+          <Button onClick={() => performOperation('y√x')} variant="outline" className="p-4 text-xl font-light" title="Nth Root">
             y√x
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('e^x')} title="e to the power of x">
+          </Button>
+          <Button onClick={() => performFunction('e^x')} variant="outline" className="p-4 text-xl font-light" title="e to the power of x">
             e^x
-          </CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('4')}>4</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('5')}>5</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('6')}>6</CalculatorButton>
-          <CalculatorButton 
+          </Button>
+          <Button onClick={() => inputDigit('4')} variant="outline" className="p-4 text-xl font-light">4</Button>
+          <Button onClick={() => inputDigit('5')} variant="outline" className="p-4 text-xl font-light">5</Button>
+          <Button onClick={() => inputDigit('6')} variant="outline" className="p-4 text-xl font-light">6</Button>
+          <Button 
             onClick={() => performOperation('-')}
-            className="bg-orange-400 text-white hover:bg-orange-500"
+            variant="primary"
+            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
             title="Subtract"
           >
             <Minus size={20} className="mx-auto" />
-          </CalculatorButton>
+          </Button>
 
           {/* Row 5: Remaining numbers and Equals */}
-          <CalculatorButton onClick={inputPercent} title="Percent">
+          <Button onClick={inputPercent} variant="outline" className="p-4 text-xl font-light" title="Percent">
             <Percent size={20} className="mx-auto" />
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performFunction('sqrt')} title="Square Root">
+          </Button>
+          <Button onClick={() => performFunction('sqrt')} variant="outline" className="p-4 text-xl font-light" title="Square Root">
             √
-          </CalculatorButton>
-          <CalculatorButton onClick={() => inputConstant('e')} title="Euler's Number">
+          </Button>
+          <Button onClick={() => inputConstant('e')} variant="outline" className="p-4 text-xl font-light" title="Euler's Number">
             e
-          </CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('1')}>1</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('2')}>2</CalculatorButton>
-          <CalculatorButton onClick={() => inputDigit('3')}>3</CalculatorButton>
-          <CalculatorButton 
+          </Button>
+          <Button onClick={() => inputDigit('1')} variant="outline" className="p-4 text-xl font-light">1</Button>
+          <Button onClick={() => inputDigit('2')} variant="outline" className="p-4 text-xl font-light">2</Button>
+          <Button onClick={() => inputDigit('3')} variant="outline" className="p-4 text-xl font-light">3</Button>
+          <Button 
             onClick={() => performOperation('+')}
-            className="bg-orange-400 text-white hover:bg-orange-500"
+            variant="primary"
+            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
             title="Add"
           >
             <Plus size={20} className="mx-auto" />
-          </CalculatorButton>
+          </Button>
 
           {/* Row 6: 0 and Decimal */}
-          <CalculatorButton 
+          <Button 
             onClick={() => inputDigit('0')}
-            className="col-span-3"
+            variant="outline"
+            className="col-span-3 p-4 text-xl font-light"
           >
             0
-          </CalculatorButton>
-          <CalculatorButton onClick={inputDecimal} title="Decimal Point">.</CalculatorButton>
-          <CalculatorButton
+          </Button>
+          <Button onClick={inputDecimal} variant="outline" className="p-4 text-xl font-light" title="Decimal Point">.</Button>
+          <Button
             onClick={calculate}
-            className="bg-slate-900 text-white hover:bg-slate-800"
+            variant="secondary"
+            className="p-4 text-xl font-light"
             title="Equals"
           >
             =
-          </CalculatorButton>
+          </Button>
         </div>
       </Card>
     </div>

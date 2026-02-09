@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { Card, Input, RangeSlider, ResultDisplay, CardGrid, Button } from '../common/CommonComponents';
 
 // --- Gemini API Constants and Utilities ---
-const apiKey = "AIzaSyDoEa5ozUwNrmnrY9W6A3WDp6i-OdB2wKA"; // This will be provided by the environment
+const apiKey = "AIzaSyDoEa5ozUwNrmnrY9W6A3WDp6i-OdB2wKA";
 const model = 'gemini-2.5-flash-preview-09-2025';
 
 interface AnalysisResult {
@@ -9,7 +10,6 @@ interface AnalysisResult {
   sources: { uri: string; title: string }[];
 }
 
-// Add interfaces for Gemini API response structure
 interface GeminiAttribution {
   web?: {
     uri: string;
@@ -32,9 +32,6 @@ interface GeminiResponse {
   candidates?: GeminiCandidate[];
 }
 
-/**
- * Executes a function with exponential backoff for API resilience.
- */
 const withExponentialBackoff = async <T,>(
   fn: () => Promise<T>,
   retries: number = 3,
@@ -52,27 +49,6 @@ const withExponentialBackoff = async <T,>(
   }
   throw new Error("Exponential backoff failed.");
 };
-
-
-// --- Internal Common Components ---
-interface CardProps {
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
-  className?: string;
-}
-
-const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
-    {title && (
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
-    )}
-    {description && (
-      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
-    )}
-    {children}
-  </div>
-);
 
 interface InputFieldProps {
   label: string;
@@ -92,35 +68,26 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, min = 0
     }
   };
 
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(parseFloat(e.target.value));
-  };
-
   return (
     <div className="mb-6">
-      {/* FIXED: Removed conflicting 'block' class (flex already handles display) */}
-      <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 flex justify-between">
-        <span>{label}</span>
-        <span className="font-semibold text-slate-900">{value.toLocaleString()} {unit}</span>
-      </label>
-      <div className="flex items-center space-x-4">
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={handleSliderChange}
-          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
-        <input
+      <RangeSlider
+        label={label}
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        unit={` ${unit}`}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+      />
+      <div className="mt-2">
+        <Input
           type="number"
+          value={value}
           min={min}
           max={max}
           step={step}
-          value={value}
           onChange={handleTextChange}
-          className="w-24 p-2 border border-slate-300 dark:border-slate-600 rounded-lg text-right focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+          className="w-32"
         />
       </div>
     </div>
@@ -317,33 +284,31 @@ export const LoanCalculator: React.FC = () => {
           />
 
           {/* Results Display */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">Results</h3>
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4">Results</h3>
 
             {/* Monthly Payment */}
-            <div className="flex justify-between items-center py-3 px-4 bg-orange-100 rounded-lg mb-4 shadow-md">
-              <span className="text-base font-semibold text-orange-800">Monthly Payment</span>
-              <span className="text-3xl font-extrabold text-orange-900">
-                {formatCurrency(monthlyPayment)}
-              </span>
+            <div className="mb-6">
+              <ResultDisplay
+                label="Monthly Payment"
+                value={formatCurrency(monthlyPayment)}
+                variant="success"
+              />
             </div>
 
             {/* Amortization Summary */}
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200">
-                <p className="text-sm font-medium text-slate-600">Total Repayment</p>
-                <p className="text-xl font-bold text-slate-700 dark:text-slate-300 mt-1">
-                  {formatCurrency(totalRepayment)}
-                </p>
-              </div>
-
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200">
-                <p className="text-sm font-medium text-slate-600">Total Interest Paid</p>
-                <p className="text-xl font-bold text-slate-700 dark:text-slate-300 mt-1">
-                  {formatCurrency(totalInterest)}
-                </p>
-              </div>
-            </div>
+            <CardGrid columns={2}>
+              <ResultDisplay
+                label="Total Repayment"
+                value={formatCurrency(totalRepayment)}
+                variant="default"
+              />
+              <ResultDisplay
+                label="Total Interest Paid"
+                value={formatCurrency(totalInterest)}
+                variant="default"
+              />
+            </CardGrid>
             
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 text-center">
                 This calculation uses the standard amortization formula for fixed-rate loans.
@@ -351,18 +316,16 @@ export const LoanCalculator: React.FC = () => {
           </div>
           
           {/* Gemini API Feature */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <button
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <Button
               onClick={handleLoanAnalysis}
               disabled={isLoading || monthlyPayment <= 0}
-              className={`w-full p-3 font-bold rounded-lg transition duration-200 shadow-lg 
-                ${isLoading || monthlyPayment <= 0
-                  ? 'bg-gray-400 cursor-not-allowed'  // FIXED: Removed conflicting text-gray-701
-                  : 'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800'  // FIXED: Removed conflicting text-white
-                } text-white`}  // FIXED: Consolidated text color here
+              variant="primary"
+              fullWidth
+              className="shadow-lg"
             >
               {isLoading ? 'Analyzing Loan...' : 'Get Financial Analysis ✨'}
-            </button>
+            </Button>
 
             {/* Analysis Output */}
             <div className="mt-4 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 shadow-inner">

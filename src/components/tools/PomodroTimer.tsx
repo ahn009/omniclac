@@ -1,60 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Clock, Coffee, Zap } from 'lucide-react';
-
-// --- Card Component ---
-interface CardProps {
-  title?: string;
-  description?: string;
-  className?: string;
-  children: React.ReactNode;
-}
-
-const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
-    {title && (
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
-    )}
-    {description && (
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
-    )}
-    {children}
-  </div>
-);
-
-// --- Button Component ---
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'danger' | 'ghost';
-  size?: 'md' | 'lg';
-  children: React.ReactNode;
-}
-
-const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', size: 'md' | 'lg'): string => {
-  const base = 'rounded-lg font-semibold transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const sizeClasses = size === 'lg' ? 'px-6 py-3 text-lg' : 'px-4 py-2 text-base';
-
-  switch (variant) {
-    case 'primary':
-      return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
-    case 'outline':
-      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
-    case 'danger':
-      return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
-    case 'ghost':
-      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
-    default:
-      return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
-  }
-};
-
-const Button: React.FC<ButtonProps> = ({ variant = 'primary', size = 'md', className = '', children, ...props }) => (
-  <button
-    className={`${getButtonStyles(variant, size)} ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
+import { Card, Button } from '../common/CommonComponents';
 
 // --- Timer Hook ---
 interface TimerState {

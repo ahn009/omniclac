@@ -1,41 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-
-// --- Internal Common Components ---
-interface CardProps {
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
-  className?: string;
-}
-
-const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
-    {title && (
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
-    )}
-    {description && (
-      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
-    )}
-    {children}
-  </div>
-);
-
-interface CalculatorButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-}
-
-const CalculatorButton: React.FC<CalculatorButtonProps> = ({ onClick, children, className = '', disabled }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className={`p-4 text-2xl font-semibold rounded-xl transition duration-150 ease-in-out bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 active:bg-slate-300 shadow-md ${className}`}
-  >
-    {children}
-  </button>
-);
+import { Card, Button } from '../common/CommonComponents';
 
 // --- Standard Calculator Logic ---
 export const StandardCalculator: React.FC = () => {
@@ -180,7 +144,7 @@ export const StandardCalculator: React.FC = () => {
   return (
     <div className="max-w-sm mx-auto p-4 md:p-6">
       <Card className="p-0 overflow-hidden shadow-2xl">
-        <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
+        <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
           <div className="text-sm font-medium text-slate-500 dark:text-slate-400 h-5 mb-1">
             {prevValue !== null && operator ? `${formatDisplay(prevValue)} ${operator}` : ''}
           </div>
@@ -191,64 +155,66 @@ export const StandardCalculator: React.FC = () => {
 
         <div className="grid grid-cols-4 gap-2 p-4">
           {/* Top row - AC, +/-, %, ÷ */}
-          <CalculatorButton onClick={clearAll} className="bg-slate-300 hover:bg-slate-400">
+          <Button onClick={clearAll} variant="danger" className="p-4 text-2xl">
             AC
-          </CalculatorButton>
-          <CalculatorButton onClick={toggleSign} className="bg-slate-300 hover:bg-slate-400">
+          </Button>
+          <Button onClick={toggleSign} variant="outline" className="p-4 text-2xl">
             ±
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performOperation('%')} className="bg-slate-300 hover:bg-slate-400" disabled>
+          </Button>
+          <Button onClick={() => performOperation('%')} variant="outline" className="p-4 text-2xl" disabled>
             %
-          </CalculatorButton>
-          <CalculatorButton onClick={() => performOperation('÷')} className="bg-orange-500 text-white hover:bg-orange-600">
+          </Button>
+          <Button onClick={() => performOperation('÷')} variant="outline" className="p-4 text-2xl">
             ÷
-          </CalculatorButton>
+          </Button>
 
           {/* 7, 8, 9, × */}
           {[7, 8, 9].map((num) => (
-            <CalculatorButton key={num} onClick={() => inputDigit(num.toString())}>
+            <Button key={num} onClick={() => inputDigit(num.toString())} variant="primary" className="p-4 text-2xl">
               {num}
-            </CalculatorButton>
+            </Button>
           ))}
-          <CalculatorButton onClick={() => performOperation('×')} className="bg-orange-500 text-white hover:bg-orange-600">
+          <Button onClick={() => performOperation('×')} variant="outline" className="p-4 text-2xl">
             ×
-          </CalculatorButton>
+          </Button>
 
           {/* 4, 5, 6, - */}
           {[4, 5, 6].map((num) => (
-            <CalculatorButton key={num} onClick={() => inputDigit(num.toString())}>
+            <Button key={num} onClick={() => inputDigit(num.toString())} variant="primary" className="p-4 text-2xl">
               {num}
-            </CalculatorButton>
+            </Button>
           ))}
-          <CalculatorButton onClick={() => performOperation('-')} className="bg-orange-500 text-white hover:bg-orange-600">
+          <Button onClick={() => performOperation('-')} variant="outline" className="p-4 text-2xl">
             -
-          </CalculatorButton>
+          </Button>
 
           {/* 1, 2, 3, + */}
           {[1, 2, 3].map((num) => (
-            <CalculatorButton key={num} onClick={() => inputDigit(num.toString())}>
+            <Button key={num} onClick={() => inputDigit(num.toString())} variant="primary" className="p-4 text-2xl">
               {num}
-            </CalculatorButton>
+            </Button>
           ))}
-          <CalculatorButton onClick={() => performOperation('+')} className="bg-orange-500 text-white hover:bg-orange-600">
+          <Button onClick={() => performOperation('+')} variant="outline" className="p-4 text-2xl">
             +
-          </CalculatorButton>
+          </Button>
 
           {/* 0, ., = */}
-          <CalculatorButton
+          <Button
             onClick={() => inputDigit('0')}
-            className="col-span-2"
+            variant="primary"
+            className="col-span-2 p-4 text-2xl"
           >
             0
-          </CalculatorButton>
-          <CalculatorButton onClick={inputDecimal}>.</CalculatorButton>
+          </Button>
+          <Button onClick={inputDecimal} variant="primary" className="p-4 text-2xl">.</Button>
 
-          <CalculatorButton
+          <Button
             onClick={calculate}
-            className="bg-slate-900 text-white hover:bg-slate-800"
+            variant="secondary"
+            className="p-4 text-2xl"
           >
             =
-          </CalculatorButton>
+          </Button>
         </div>
 
         <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 text-center pb-4 px-4">

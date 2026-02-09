@@ -1,85 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowLeftRight, Ruler, Scale, Thermometer, Box } from 'lucide-react';
-
-// --- Card Component ---
-interface CardProps {
-  title?: string;
-  description?: string;
-  className?: string;
-  children: React.ReactNode;
-}
-
-const Card: React.FC<CardProps> = ({ title, description, className = '', children }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-xl p-6 ${className}`}>
-    {title && (
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">{title}</h2>
-    )}
-    {description && (
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{description}</p>
-    )}
-    {children}
-  </div>
-);
-
-// --- Input Component ---
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  icon?: React.ComponentType<{ className?: string }>;
-}
-
-const Input: React.FC<InputProps> = ({ label, icon: Icon, ...props }) => (
-  <div className="space-y-1">
-    <label className="block text-sm font-medium text-slate-700">
-      {label}
-    </label>
-    <div className="relative rounded-lg shadow-sm">
-      {Icon && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <Icon className="h-5 w-5 text-slate-400" aria-hidden="true" />
-        </div>
-      )}
-      <input
-        className={`block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 dark:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150 ${Icon ? 'pl-10' : 'pl-4 pr-4'}`}
-        {...props}
-      />
-    </div>
-  </div>
-);
-
-// --- Button Component ---
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'danger' | 'ghost';
-  size?: 'md' | 'lg';
-  children: React.ReactNode;
-}
-
-const getButtonStyles = (variant: 'primary' | 'outline' | 'danger' | 'ghost', size: 'md' | 'lg'): string => {
-  const base = 'rounded-lg font-semibold transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const sizeClasses = size === 'lg' ? 'px-6 py-3 text-lg' : 'px-4 py-2 text-base';
-
-  switch (variant) {
-    case 'primary':
-      return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
-    case 'outline':
-      return `${base} bg-white text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800 ${sizeClasses}`;
-    case 'danger':
-      return `${base} bg-red-600 text-white hover:bg-red-700 shadow-md ${sizeClasses}`;
-    case 'ghost':
-      return `${base} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 ${sizeClasses}`;
-    default:
-      return `${base} bg-blue-600 text-white hover:bg-blue-700 shadow-md ${sizeClasses}`;
-  }
-};
-
-const Button: React.FC<ButtonProps> = ({ variant = 'primary', size = 'md', className = '', children, ...props }) => (
-  <button
-    className={`${getButtonStyles(variant, size)} ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
+import { Card, Input, Button, Select } from '../common/CommonComponents';
 
 // --- Unit Converter Component ---
 type Category = 'length' | 'weight' | 'temperature' | 'volume';
@@ -192,17 +113,17 @@ export const UnitConverter: React.FC = () => {
       >
         <div className="space-y-6">
           {/* Category Selection */}
-          <div className="flex justify-around bg-slate-100 dark:bg-slate-800 p-2 rounded-xl">
+          <div className="flex justify-around bg-slate-100 dark:bg-slate-800 p-2 rounded-xl gap-1">
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryChange(cat.id)}
-                  className={`flex items-center justify-center gap-2 flex-1 py-2 text-sm font-semibold rounded-lg transition duration-150 ${
+                  className={`flex items-center justify-center gap-2 flex-1 py-2 text-sm font-semibold rounded-lg transition ${
                     cat.id === category
-                      ? 'text-blue-600 bg-white dark:bg-slate-900 shadow'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                      ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700 shadow'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -224,39 +145,31 @@ export const UnitConverter: React.FC = () => {
               placeholder="1"
             />
             
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-700">
-                From Unit
-              </label>
-              <select
-                value={fromUnit}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFromUnit(e.target.value)}
-                className="block w-full rounded-lg border-0 py-2.5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-slate-400 dark:focus:ring-slate-500 sm:text-sm sm:leading-6 transition duration-150"
-              >
-                {unitsByCategory[category].map((unit) => (
-                  <option key={unit} value={unit}>
-                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="From Unit"
+              value={fromUnit}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFromUnit(e.target.value)}
+              options={unitsByCategory[category].map(unit => ({
+                value: unit,
+                label: unit.charAt(0).toUpperCase() + unit.slice(1)
+              }))}
+            />
           </div>
           
           <Button
             onClick={swapUnits}
             variant="outline"
-            className="w-full flex items-center justify-center gap-2"
-            size="md"
+            icon={ArrowLeftRight}
+            fullWidth
           >
-            <ArrowLeftRight className="w-4 h-4" />
             Swap Units
           </Button>
 
           {/* Converted Value Display */}
-          <div className="pt-6 border-t border-slate-200">
-            <div className="text-center bg-blue-50 p-4 rounded-xl border border-blue-200">
+          <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
+            <div className="text-center bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-700">
               <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">Result in {toUnit.charAt(0).toUpperCase() + toUnit.slice(1)}</div>
-              <div className="text-5xl font-extralight font-mono text-slate-900 dark:text-slate-100 mb-2">
+              <div className="text-5xl font-bold font-mono text-slate-900 dark:text-slate-100 mb-2">
                 {convertValue}
               </div>
             </div>

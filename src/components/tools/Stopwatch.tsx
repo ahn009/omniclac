@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Card, Button } from '../common/CommonComponents';
 
 // --- Internal Utility Functions ---
 const formatTime = (ms: number): string => {
@@ -91,78 +92,6 @@ const useAccurateTimer = (config: UseTimerConfig): UseTimerResult => {
   }, []);
 
   return { isRunning, elapsedTime, toggle, reset, setElapsedTime };
-};
-
-// --- Internal Common Components ---
-interface CardProps {
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
-  className?: string;
-}
-
-const Card: React.FC<CardProps> = ({ children, title, description, className = '' }) => (
-  <div className={`bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-6 md:p-8 ${className}`}>
-    {title && (
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{title}</h2>
-    )}
-    {description && (
-      <p className="text-slate-600 dark:text-slate-400 mb-6">{description}</p>
-    )}
-    {children}
-  </div>
-);
-
-interface ButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-  variant: 'primary' | 'danger' | 'outline' | 'ghost';
-  disabled?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
-
-const getVariantClasses = (variant: ButtonProps['variant']): string => {
-  switch (variant) {
-    case 'primary':
-      return 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 shadow-md shadow-blue-500/50';
-    case 'danger':
-      return 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md shadow-red-500/50';
-    case 'outline':
-      return 'bg-white text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
-    case 'ghost':
-      return 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-800 active:bg-slate-200';
-    default:
-      return '';
-  }
-};
-
-const getSizeClasses = (size: ButtonProps['size']): string => {
-  switch (size) {
-    case 'sm':
-      return 'px-3 py-1.5 text-sm';
-    case 'lg':
-      return 'px-6 py-3 text-lg';
-    case 'md':
-    default:
-      return 'px-4 py-2';
-  }
-};
-
-const Button: React.FC<ButtonProps> = ({ onClick, children, variant, disabled, size = 'md', className = '' }) => {
-  const baseClasses = 'font-semibold rounded-xl transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-  const variantClasses = getVariantClasses(variant);
-  const sizeClasses = getSizeClasses(size);
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className}`}
-    >
-      {children}
-    </button>
-  );
 };
 
 // --- Stopwatch Component ---
