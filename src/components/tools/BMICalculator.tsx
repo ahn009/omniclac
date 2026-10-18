@@ -7,6 +7,8 @@ interface BMICategory {
   text: string;
   color: string;
   bg: string;
+  darkColor: string;
+  darkBg: string;
 }
 
 export const BMICalculator: React.FC = () => {
@@ -36,10 +38,12 @@ export const BMICalculator: React.FC = () => {
 
   const getBMICategory = (bmiValue: number | null): BMICategory | null => {
     if (bmiValue === null) return null;
-    if (bmiValue < 18.5) return { text: 'Underweight', color: 'text-blue-600', bg: 'bg-blue-50' };
-    if (bmiValue < 25) return { text: 'Normal Weight', color: 'text-green-600', bg: 'bg-green-50' };
-    if (bmiValue < 30) return { text: 'Overweight', color: 'text-orange-600', bg: 'bg-orange-50' };
-    return { text: 'Obesity', color: 'text-red-600', bg: 'bg-red-50' };
+    // NOTE: dark: classes are written literally so Tailwind generates them —
+    // building them with string replacement at runtime silently drops the styles.
+    if (bmiValue < 18.5) return { text: 'Underweight', color: 'text-blue-600', bg: 'bg-blue-50', darkColor: 'dark:text-blue-400', darkBg: 'dark:bg-blue-900/20' };
+    if (bmiValue < 25) return { text: 'Normal Weight', color: 'text-green-600', bg: 'bg-green-50', darkColor: 'dark:text-green-400', darkBg: 'dark:bg-green-900/20' };
+    if (bmiValue < 30) return { text: 'Overweight', color: 'text-orange-600', bg: 'bg-orange-50', darkColor: 'dark:text-orange-400', darkBg: 'dark:bg-orange-900/20' };
+    return { text: 'Obesity', color: 'text-red-600', bg: 'bg-red-50', darkColor: 'dark:text-red-400', darkBg: 'dark:bg-red-900/20' };
   };
 
   const category = getBMICategory(bmi);
@@ -103,10 +107,10 @@ export const BMICalculator: React.FC = () => {
           </Button>
 
           {bmi !== null && category && (
-            <div className={`pt-6 border-t border-slate-200 dark:border-slate-700 text-center rounded-xl p-6 ${category.bg} dark:${category.bg.replace('50', '900/20')} border`}>
+            <div className={`pt-6 border-t border-slate-200 dark:border-slate-700 text-center rounded-2xl p-6 ${category.bg} ${category.darkBg} border border-slate-200 dark:border-slate-700 shadow-elevation-1 animate-enter`}>
               <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Your BMI</div>
-              <div className="text-6xl font-bold text-slate-900 dark:text-slate-100 mb-2">{bmi}</div>
-              <div className={`text-xl font-semibold ${category.color} dark:${category.color.replace('600', '400')} mb-4`}>
+              <div className="font-display text-6xl font-bold text-slate-900 dark:text-slate-100 mb-2 tnum">{bmi}</div>
+              <div className={`text-xl font-semibold ${category.color} ${category.darkColor} mb-4`}>
                 {category.text}
               </div>
               

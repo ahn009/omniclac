@@ -113,17 +113,20 @@ export const UnitConverter: React.FC = () => {
       >
         <div className="space-y-6">
           {/* Category Selection */}
-          <div className="flex justify-around bg-slate-100 dark:bg-slate-800 p-2 rounded-xl gap-1">
+          <div className="flex justify-around bg-slate-200/60 dark:bg-slate-800/80 p-2 rounded-2xl gap-1 shadow-inset" role="tablist" aria-label="Unit categories">
             {categories.map((cat) => {
               const Icon = cat.icon;
+              const isActive = cat.id === category;
               return (
                 <button
                   key={cat.id}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => handleCategoryChange(cat.id)}
-                  className={`flex items-center justify-center gap-2 flex-1 py-2 text-sm font-semibold rounded-lg transition ${
-                    cat.id === category
-                      ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700 shadow'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  className={`flex items-center justify-center gap-2 flex-1 py-2.5 text-sm font-semibold rounded-xl transition ${
+                    isActive
+                      ? 'text-white bg-gradient-to-b from-indigo-500 to-indigo-600 shadow-elevation-2'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

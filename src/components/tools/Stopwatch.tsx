@@ -156,7 +156,7 @@ export const Stopwatch: React.FC = () => {
             {formatTime(elapsedTime)}
           </div>
           {laps.length > 0 && (
-            <div className="text-xl font-light font-mono text-slate-600">
+            <div className="text-xl font-light font-mono text-slate-600 dark:text-slate-400 tnum">
               <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 mr-2">Lap Time:</span> 
               {formatTime(timeSinceLastLap)}
             </div>
@@ -197,19 +197,19 @@ export const Stopwatch: React.FC = () => {
             {laps.map((lap, index) => (
               <div
                 key={lap.id}
-                className="flex items-center justify-between py-3 px-4 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                className="flex items-center justify-between py-3 px-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 flex items-center justify-center bg-slate-200 rounded-full text-sm font-medium">
+                  <span className="w-8 h-8 flex items-center justify-center bg-slate-200 dark:bg-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-200">
                     {laps.length - index}
                   </span>
-                  <span className="text-slate-700">{lap.label}</span>
+                  <span className="text-slate-700 dark:text-slate-300">{lap.label}</span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="font-mono font-medium text-slate-900">
+                  <span className="font-mono font-medium text-slate-900 dark:text-slate-100 tnum">
                     Total: {formatTime(lap.time)}
                   </span>
-                  <span className="font-mono font-medium text-blue-600">
+                  <span className="font-mono font-medium text-blue-600 dark:text-blue-400 tnum">
                     Lap: {formatTime(lap.lapTime)} 
                   </span>
                 </div>

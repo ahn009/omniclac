@@ -56,16 +56,17 @@ const calculateAmortizationSchedule = ({ loanAmount, interestRate, loanTerm }: P
 const validateMortgageInput = (loanAmount: number, interestRate: number, loanTerm: number): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
-  if (loanAmount <= 0) {
-    errors.push('Loan Amount must be greater than 0.');
+  // Number.isFinite rejects NaN/Infinity, which comparisons like `NaN <= 0` would silently pass.
+  if (!Number.isFinite(loanAmount) || loanAmount <= 0) {
+    errors.push('Loan Amount must be a number greater than 0.');
   }
-  if (interestRate < 0) {
+  if (!Number.isFinite(interestRate) || interestRate < 0) {
     errors.push('Interest Rate cannot be negative.');
   }
-  if (loanTerm <= 0 || loanTerm > 60) {
+  if (!Number.isFinite(loanTerm) || loanTerm <= 0 || loanTerm > 60) {
     errors.push('Loan Term must be between 1 and 60 years.');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,

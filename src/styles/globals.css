@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,6 +7,14 @@
 @layer base {
   :root {
     --transition-theme: 200ms ease-in-out;
+
+    /* Real shadow tokens (used by tailwind's shadow-soft / shadow-glass / ...) */
+    --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px -8px rgb(15 23 42 / 0.14);
+    --shadow-glass: 0 8px 32px -8px rgb(15 23 42 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.6);
+    --shadow-inset: inset 0 2px 6px rgb(15 23 42 / 0.08);
+    --shadow-elevation-1: 0 1px 2px rgb(15 23 42 / 0.08), 0 2px 8px -2px rgb(15 23 42 / 0.1);
+    --shadow-elevation-2: 0 2px 4px rgb(15 23 42 / 0.08), 0 12px 32px -8px rgb(15 23 42 / 0.18);
+    --shadow-elevation-3: 0 4px 8px rgb(15 23 42 / 0.1), 0 24px 48px -12px rgb(15 23 42 / 0.25);
   }
 
   html {
@@ -16,31 +24,257 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  * {
-    transition: background-color var(--transition-theme), 
-                border-color var(--transition-theme), 
-                color var(--transition-theme);
+  body {
+    @apply antialiased text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-950;
+    transition: background-color var(--transition-theme), color var(--transition-theme);
   }
 
-  body {
-    @apply antialiased text-slate-900 dark:text-slate-100 
-           bg-gradient-to-br from-slate-50 via-white to-slate-100 
-           dark:from-slate-950 dark:via-slate-900 dark:to-slate-950;
+  /* Scoped transitions: only interactive elements animate theme changes,
+     so high-frequency re-renders (timers, stopwatches) never jank. */
+  button, a, input, select, textarea, label {
+    transition: background-color var(--transition-theme),
+                border-color var(--transition-theme),
+                color var(--transition-theme),
+                box-shadow 120ms ease,
+                transform 80ms ease;
   }
 
   ::selection {
-    @apply bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900;
+    @apply bg-indigo-600 text-white;
   }
 
-  input, select, textarea {
-    @apply outline-none;
+  /* Visible keyboard focus everywhere (replaces the old global outline-none). */
+  :focus-visible {
+    outline: 2px solid theme("colors.indigo.500");
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .font-display {
+    font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer components {
+  /* ---------- 3D surfaces ---------- */
+
+  /* Elevated panel with physical depth: top highlight + layered drop shadows. */
+  .panel-3d {
+    @apply rounded-3xl border border-white/60 dark:border-white/10;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(248 250 252 / 0.88));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 1px 2px rgb(15 23 42 / 0.06),
+      0 12px 32px -12px rgb(15 23 42 / 0.18),
+      0 24px 64px -24px rgb(79 70 229 / 0.12);
+    backdrop-filter: blur(12px);
+  }
+  .dark .panel-3d {
+    background: linear-gradient(180deg, rgb(30 41 59 / 0.85), rgb(15 23 42 / 0.9));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 1px 2px rgb(0 0 0 / 0.4),
+      0 16px 40px -12px rgb(0 0 0 / 0.55),
+      0 24px 64px -24px rgb(99 102 241 / 0.18);
+  }
+
+  /* Frosted glass panel for overlays / sidebars. */
+  .glass {
+    @apply border border-white/50 dark:border-white/10;
+    background: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(20px) saturate(1.4);
+    box-shadow: var(--shadow-glass);
+  }
+  .dark .glass {
+    background: rgb(15 23 42 / 0.72);
+  }
+
+  /* Sunken display well (calculator readouts, result screens). */
+  .display-well {
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, rgb(241 245 249), rgb(226 232 240));
+    box-shadow:
+      inset 0 2px 8px rgb(15 23 42 / 0.1),
+      inset 0 -1px 0 rgb(255 255 255 / 0.7),
+      0 1px 0 rgb(255 255 255 / 0.8);
+  }
+  .dark .display-well {
+    background: linear-gradient(180deg, rgb(2 6 23), rgb(15 23 42));
+    box-shadow:
+      inset 0 2px 12px rgb(0 0 0 / 0.55),
+      inset 0 -1px 0 rgb(255 255 255 / 0.05),
+      0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  /* ---------- Tactile 3D keys ---------- */
+
+  .key-3d {
+    position: relative;
+    border-radius: 1rem;
+    font-weight: 600;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(180deg, #ffffff 0%, #eef2f7 100%);
+    border: 1px solid rgb(203 213 225 / 0.8);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.95),
+      inset 0 -3px 6px rgb(15 23 42 / 0.06),
+      0 2px 3px rgb(15 23 42 / 0.1),
+      0 6px 12px -4px rgb(15 23 42 / 0.16);
+    transition: transform 70ms ease, box-shadow 70ms ease, filter 120ms ease;
+  }
+  .key-3d:hover {
+    filter: brightness(1.03);
+  }
+  .key-3d:active {
+    transform: translateY(3px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.5),
+      inset 0 3px 8px rgb(15 23 42 / 0.14),
+      0 1px 2px rgb(15 23 42 / 0.08);
+  }
+  .dark .key-3d {
+    background: linear-gradient(180deg, #3b4a63 0%, #232f47 100%);
+    border-color: rgb(255 255 255 / 0.09);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.14),
+      inset 0 -3px 6px rgb(0 0 0 / 0.25),
+      0 2px 3px rgb(0 0 0 / 0.35),
+      0 8px 16px -6px rgb(0 0 0 / 0.5);
+  }
+  .dark .key-3d:active {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      inset 0 3px 10px rgb(0 0 0 / 0.45),
+      0 1px 2px rgb(0 0 0 / 0.3);
+  }
+
+  .key-3d-operator {
+    background: linear-gradient(180deg, #fdba74 0%, #fb923c 55%, #f97316 100%);
+    border-color: rgb(194 65 12 / 0.55);
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(124 45 18 / 0.45);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      inset 0 -3px 6px rgb(124 45 18 / 0.28),
+      0 2px 3px rgb(124 45 18 / 0.3),
+      0 8px 16px -6px rgb(249 115 22 / 0.55);
+  }
+  .key-3d-operator:active {
+    box-shadow:
+      inset 0 3px 10px rgb(124 45 18 / 0.45),
+      0 1px 2px rgb(124 45 18 / 0.25);
+  }
+
+  .key-3d-action {
+    background: linear-gradient(180deg, #818cf8 0%, #6366f1 55%, #4f46e5 100%);
+    border-color: rgb(67 56 202 / 0.55);
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(49 46 129 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.4),
+      inset 0 -3px 6px rgb(49 46 129 / 0.3),
+      0 2px 3px rgb(49 46 129 / 0.3),
+      0 8px 16px -6px rgb(99 102 241 / 0.6);
+  }
+  .key-3d-action:active {
+    box-shadow:
+      inset 0 3px 10px rgb(49 46 129 / 0.5),
+      0 1px 2px rgb(49 46 129 / 0.25);
+  }
+
+  .key-3d-danger {
+    background: linear-gradient(180deg, #fca5a5 0%, #f87171 55%, #ef4444 100%);
+    border-color: rgb(153 27 27 / 0.5);
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(127 29 29 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.4),
+      inset 0 -3px 6px rgb(127 29 29 / 0.3),
+      0 2px 3px rgb(127 29 29 / 0.3),
+      0 8px 16px -6px rgb(239 68 68 / 0.55);
+  }
+  .key-3d-danger:active {
+    box-shadow:
+      inset 0 3px 10px rgb(127 29 29 / 0.5),
+      0 1px 2px rgb(127 29 29 / 0.25);
+  }
+
+  .key-3d-equals {
+    background: linear-gradient(180deg, #6ee7b7 0%, #34d399 55%, #10b981 100%);
+    border-color: rgb(6 95 70 / 0.5);
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(6 78 59 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      inset 0 -3px 6px rgb(6 78 59 / 0.3),
+      0 2px 3px rgb(6 78 59 / 0.3),
+      0 8px 16px -6px rgb(16 185 129 / 0.6);
+  }
+  .key-3d-equals:active {
+    box-shadow:
+      inset 0 3px 10px rgb(6 78 59 / 0.5),
+      0 1px 2px rgb(6 78 59 / 0.25);
+  }
+
+  .key-3d:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ---------- Modern range slider ---------- */
+
+  .slider-3d {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, rgb(226 232 240), rgb(203 213 225));
+    box-shadow: inset 0 2px 4px rgb(15 23 42 / 0.14), 0 1px 0 rgb(255 255 255 / 0.7);
+    outline-offset: 4px;
+  }
+  .dark .slider-3d {
+    background: linear-gradient(180deg, rgb(2 6 23), rgb(30 41 59));
+    box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.5), 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+  .slider-3d::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #a5b4fc 0%, #6366f1 60%, #4f46e5 100%);
+    border: 2px solid rgb(255 255 255 / 0.85);
+    box-shadow:
+      0 2px 4px rgb(49 46 129 / 0.4),
+      0 6px 12px -4px rgb(99 102 241 / 0.6),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+    cursor: grab;
+  }
+  .slider-3d::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.08);
+  }
+  .slider-3d::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #a5b4fc 0%, #6366f1 60%, #4f46e5 100%);
+    border: 2px solid rgb(255 255 255 / 0.85);
+    box-shadow: 0 2px 4px rgb(49 46 129 / 0.4), 0 6px 12px -4px rgb(99 102 241 / 0.6);
+    cursor: grab;
+  }
+
+  /* ---------- Misc ---------- */
+
   .glass-card {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md 
-           border border-slate-200/60 dark:border-slate-700/60 
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md
+           border border-slate-200/60 dark:border-slate-700/60
            shadow-lg dark:shadow-slate-950/50;
   }
 
@@ -49,13 +283,24 @@
   }
 
   .section-title {
-    @apply text-xl sm:text-2xl font-bold tracking-tight 
+    @apply font-display text-xl sm:text-2xl font-bold tracking-tight
            text-slate-900 dark:text-slate-100;
   }
 
   .section-subtitle {
     @apply text-sm sm:text-base text-slate-600 dark:text-slate-400;
   }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent;
+  }
+
+  .animate-enter {
+    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-enter-1 { animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.06s both; }
+  .animate-enter-2 { animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both; }
+  .animate-enter-3 { animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
 }
 
 @layer utilities {

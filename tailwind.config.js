@@ -7,6 +7,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Space Grotesk"', '"Inter"', 'system-ui', 'sans-serif'],
+      },
       colors: {
         surface: {
           50: 'rgb(var(--color-surface-50) / <alpha-value>)',
