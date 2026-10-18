@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Divide, X, Minus, Plus, Percent, Play, Maximize2 } from 'lucide-react';
-import { Card, Button } from '../common/CommonComponents';
+import { Divide, X, Minus, Plus, Percent } from 'lucide-react';
+import { Card, CalcKey } from '../common/CommonComponents';
 
 export const ScientificCalculator: React.FC = () => {
   const [display, setDisplay] = useState<string>('0');
@@ -13,6 +13,26 @@ export const ScientificCalculator: React.FC = () => {
   const formatResult = (value: number): string => {
     // Return to fixed if floating point errors are present, then convert to string
     return parseFloat(value.toFixed(10)).toString();
+  };
+
+  /** Push a computed value to the display, or show "Error" for non-finite results. */
+  const showResult = (value: number, historyEntry?: string): number | null => {
+    if (!isFinite(value)) {
+      setDisplay('Error');
+      setPrevValue(null);
+      setOperator(null);
+      setWaitingForOperand(true);
+      if (historyEntry) {
+        setHistory(prev => [`${historyEntry}Error`, ...prev.slice(0, 4)]);
+      }
+      return null;
+    }
+    const resultString = formatResult(value);
+    setDisplay(resultString);
+    if (historyEntry) {
+      setHistory(prev => [`${historyEntry}${resultString}`, ...prev.slice(0, 4)]);
+    }
+    return value;
   };
 
   const inputDigit = useCallback((digit: string) => {
@@ -60,10 +80,15 @@ export const ScientificCalculator: React.FC = () => {
     setDisplay(formatResult(value / 100));
   }, [display]);
 
-  const calculate = useCallback(() => {
+  /**
+   * Evaluates the pending binary operation.
+   * Returns the computed value, or null when nothing was computed
+   * (no pending operation, or a math error occurred).
+   */
+  const calculate = useCallback((): number | null => {
     const inputValue = parseFloat(display);
     if (prevValue === null || operator === null || waitingForOperand) {
-      return;
+      return null;
     }
 
     let newValue: number;
@@ -86,7 +111,7 @@ export const ScientificCalculator: React.FC = () => {
             setPrevValue(null);
             setOperator(null);
             setWaitingForOperand(true);
-            return;
+            return null;
           }
           newValue = prevValue / inputValue;
           break;
@@ -97,21 +122,22 @@ export const ScientificCalculator: React.FC = () => {
           newValue = Math.pow(prevValue, inputValue);
           break;
         default:
-          return;
+          return null;
       }
 
-      const resultString = formatResult(newValue);
-      setDisplay(resultString);
+      const result = showResult(newValue, equation);
+      if (result === null) return null;
       setPrevValue(null);
       setOperator(null);
       setWaitingForOperand(true);
-      setHistory(prev => [`${equation}${resultString}`, ...prev.slice(0, 4)]);
+      return result;
 
     } catch (e) {
       setDisplay('Error');
       setPrevValue(null);
       setOperator(null);
       setWaitingForOperand(true);
+      return null;
     }
   }, [display, prevValue, operator, waitingForOperand]);
 
@@ -119,21 +145,23 @@ export const ScientificCalculator: React.FC = () => {
     const inputValue = parseFloat(display);
 
     if (prevValue === null) {
+      // First operator pressed: store the current entry as the running value.
       setPrevValue(inputValue);
-    } else if (operator) {
-      calculate();
-      setPrevValue(parseFloat(display));
+    } else if (operator && !waitingForOperand) {
+      // Chained operation (e.g. 5 + 8 × ...): fold the pending operation into
+      // the running value using the freshly computed result — not the stale display.
+      const result = calculate();
+      if (result !== null) {
+        setPrevValue(result);
+      }
+      // On error (result === null) calculate() already reset the state.
     }
-    
+    // Otherwise an operator was pressed twice in a row: just replace it,
+    // keeping the existing running value.
+
     setOperator(nextOperator);
     setWaitingForOperand(true);
-    if (prevValue !== null && operator) {
-      setPrevValue(parseFloat(display));
-    } else {
-      setPrevValue(inputValue);
-    }
-
-  }, [display, prevValue, operator, calculate]);
+  }, [display, prevValue, operator, waitingForOperand, calculate]);
 
   const performFunction = useCallback((func: string) => {
     const value = parseFloat(display);
@@ -184,10 +212,9 @@ export const ScientificCalculator: React.FC = () => {
         default:
           return;
       }
-      const resultString = formatResult(newValue);
-      setDisplay(resultString);
+      const result = showResult(newValue, funcDisplay);
+      if (result === null) return;
       setWaitingForOperand(true);
-      setHistory(prev => [`${funcDisplay}${resultString}`, ...prev.slice(0, 4)]);
     } catch (e) {
       setDisplay('Error');
       setWaitingForOperand(true);
@@ -220,160 +247,145 @@ export const ScientificCalculator: React.FC = () => {
     <div className="max-w-md mx-auto">
       <Card className="p-4 sm:p-6 space-y-4">
         {/* Display and History */}
-        <div className="text-right">
+        <div className="display-well px-5 py-4">
           <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <span>{isDeg ? 'DEG' : 'RAD'}</span>
+            <span className="font-semibold tracking-wider">{isDeg ? 'DEG' : 'RAD'}</span>
             {history.length > 0 && (
-              <span className="max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
+              <span className="max-w-full overflow-hidden whitespace-nowrap text-ellipsis tnum">
                 {history[0]}
               </span>
             )}
           </div>
-          
-          <div 
-            className="text-4xl font-light text-slate-900 dark:text-slate-100 overflow-x-auto whitespace-nowrap [direction:rtl]"
+
+          <div
+            className="font-display text-4xl font-semibold text-slate-900 dark:text-slate-100 overflow-x-auto whitespace-nowrap text-right tnum"
             style={{ minHeight: '48px' }}
+            role="log"
+            aria-live="polite"
           >
             {display}
           </div>
           {operator && prevValue !== null && (
-            <div className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+            <div className="text-sm text-slate-400 dark:text-slate-500 mt-1 text-right tnum">
               {prevValue} {operator}
             </div>
           )}
         </div>
 
         {/* Calculator Grid */}
-        <div className="grid grid-cols-5 gap-2">
-          {/* Row 1: Functions */}
-          <Button 
-            onClick={() => setIsDeg(prev => !prev)}
-            variant={isDeg ? "primary" : "outline"}
-            className="p-4 text-xl font-light"
+        <div className="grid grid-cols-6 gap-2">
+          <CalcKey onClick={() => setIsDeg(prev => !prev)}
+            variant={isDeg ? "action" : "digit"}
+           
             title="Toggle Degrees/Radians"
+            aria-label="Toggle degrees or radians"
           >
             {isDeg ? 'DEG' : 'RAD'}
-          </Button>
-          <Button onClick={() => performFunction('x^2')} variant="outline" className="p-4 text-xl font-light" title="Square">
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('x^2')} title="Square" aria-label="Square">
             x²
-          </Button>
-          <Button onClick={() => performFunction('1/x')} variant="outline" className="p-4 text-xl font-light" title="Inverse">
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('1/x')} title="Inverse" aria-label="Reciprocal">
             1/x
-          </Button>
-          <Button 
-            onClick={clearAll}
-            variant="danger"
-            className="col-span-2 p-4 text-xl font-light"
-          >
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('sqrt')} title="Square Root" aria-label="Square root">
+            √
+          </CalcKey>
+          <CalcKey variant="danger" className="col-span-2" onClick={clearAll}>
             AC
-          </Button>
+          </CalcKey>
 
-          {/* Row 2: Trig and Advanced Ops */}
-          <Button onClick={() => performFunction('sin')} variant="outline" className="p-4 text-xl font-light" title="Sine">
+          <CalcKey onClick={() => performFunction('sin')} title="Sine" aria-label="Sine">
             sin
-          </Button>
-          <Button onClick={() => performFunction('cos')} variant="outline" className="p-4 text-xl font-light" title="Cosine">
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('cos')} title="Cosine" aria-label="Cosine">
             cos
-          </Button>
-          <Button onClick={() => performFunction('tan')} variant="outline" className="p-4 text-xl font-light" title="Tangent">
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('tan')} title="Tangent" aria-label="Tangent">
             tan
-          </Button>
-          <Button onClick={toggleSign} variant="outline" className="p-4 text-xl font-light" title="Change Sign">
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('log')} title="Log Base 10" aria-label="Logarithm base 10">
+            log
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('ln')} title="Natural Log" aria-label="Natural logarithm">
+            ln
+          </CalcKey>
+          <CalcKey onClick={toggleSign} title="Change Sign" aria-label="Change sign">
             +/-
-          </Button>
-          <Button 
-            onClick={() => performOperation('÷')}
-            variant="primary"
-            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
+          </CalcKey>
+
+          <CalcKey onClick={() => inputConstant('Pi')} title="Pi" aria-label="Pi constant">
+            π
+          </CalcKey>
+          <CalcKey onClick={() => inputConstant('e')} title="Euler's Number" aria-label="Euler's number">
+            e
+          </CalcKey>
+          <CalcKey onClick={() => performFunction('e^x')} title="e to the power of x" aria-label="E to the power of x">
+            e^x
+          </CalcKey>
+          <CalcKey onClick={() => performOperation('y^x')} title="Power" aria-label="Raise to power">
+            xʸ
+          </CalcKey>
+          <CalcKey onClick={() => performOperation('y√x')} title="Nth Root" aria-label="Nth root">
+            y√x
+          </CalcKey>
+          <CalcKey onClick={inputPercent} title="Percent" aria-label="Percent">
+            <Percent size={20} className="mx-auto" />
+          </CalcKey>
+
+          <CalcKey onClick={() => inputDigit('7')}>7</CalcKey>
+          <CalcKey onClick={() => inputDigit('8')}>8</CalcKey>
+          <CalcKey onClick={() => inputDigit('9')}>9</CalcKey>
+          <CalcKey onClick={() => performOperation('÷')}
+            variant="operator"
+           
             title="Divide"
+            aria-label="Divide"
           >
             <Divide size={20} className="mx-auto" />
-          </Button>
-
-          {/* Row 3: Log, Constants, and Numbers 7, 8, 9 */}
-          <Button onClick={() => performFunction('log')} variant="outline" className="p-4 text-xl font-light" title="Log Base 10">
-            log
-          </Button>
-          <Button onClick={() => performFunction('ln')} variant="outline" className="p-4 text-xl font-light" title="Natural Log">
-            ln
-          </Button>
-          <Button onClick={() => inputConstant('Pi')} variant="outline" className="p-4 text-xl font-light" title="Pi">
-            <Play size={20} className="mx-auto" />
-          </Button>
-          <Button onClick={() => inputDigit('7')} variant="outline" className="p-4 text-xl font-light">7</Button>
-          <Button onClick={() => inputDigit('8')} variant="outline" className="p-4 text-xl font-light">8</Button>
-          <Button onClick={() => inputDigit('9')} variant="outline" className="p-4 text-xl font-light">9</Button>
-          <Button 
-            onClick={() => performOperation('×')}
-            variant="primary"
-            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
+          </CalcKey>
+          <CalcKey onClick={() => performOperation('×')}
+            variant="operator"
+           
             title="Multiply"
+            aria-label="Multiply"
           >
             <X size={20} className="mx-auto" />
-          </Button>
-
-          {/* Row 4: Power, Root, and Numbers 4, 5, 6 */}
-          <Button onClick={() => performOperation('y^x')} variant="outline" className="p-4 text-xl font-light" title="Power">
-            <Maximize2 size={16} className="inline mr-1" />
-            <span className='text-base'>^</span>
-          </Button>
-          <Button onClick={() => performOperation('y√x')} variant="outline" className="p-4 text-xl font-light" title="Nth Root">
-            y√x
-          </Button>
-          <Button onClick={() => performFunction('e^x')} variant="outline" className="p-4 text-xl font-light" title="e to the power of x">
-            e^x
-          </Button>
-          <Button onClick={() => inputDigit('4')} variant="outline" className="p-4 text-xl font-light">4</Button>
-          <Button onClick={() => inputDigit('5')} variant="outline" className="p-4 text-xl font-light">5</Button>
-          <Button onClick={() => inputDigit('6')} variant="outline" className="p-4 text-xl font-light">6</Button>
-          <Button 
-            onClick={() => performOperation('-')}
-            variant="primary"
-            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
+          </CalcKey>
+          <CalcKey onClick={() => performOperation('−')}
+            variant="operator"
+           
             title="Subtract"
+            aria-label="Subtract"
           >
             <Minus size={20} className="mx-auto" />
-          </Button>
+          </CalcKey>
 
-          {/* Row 5: Remaining numbers and Equals */}
-          <Button onClick={inputPercent} variant="outline" className="p-4 text-xl font-light" title="Percent">
-            <Percent size={20} className="mx-auto" />
-          </Button>
-          <Button onClick={() => performFunction('sqrt')} variant="outline" className="p-4 text-xl font-light" title="Square Root">
-            √
-          </Button>
-          <Button onClick={() => inputConstant('e')} variant="outline" className="p-4 text-xl font-light" title="Euler's Number">
-            e
-          </Button>
-          <Button onClick={() => inputDigit('1')} variant="outline" className="p-4 text-xl font-light">1</Button>
-          <Button onClick={() => inputDigit('2')} variant="outline" className="p-4 text-xl font-light">2</Button>
-          <Button onClick={() => inputDigit('3')} variant="outline" className="p-4 text-xl font-light">3</Button>
-          <Button 
-            onClick={() => performOperation('+')}
-            variant="primary"
-            className="p-4 text-xl font-light bg-orange-400 hover:bg-orange-500"
+          <CalcKey onClick={() => inputDigit('4')}>4</CalcKey>
+          <CalcKey onClick={() => inputDigit('5')}>5</CalcKey>
+          <CalcKey onClick={() => inputDigit('6')}>6</CalcKey>
+          <CalcKey onClick={() => performOperation('+')}
+            variant="operator"
+           
             title="Add"
+            aria-label="Add"
           >
             <Plus size={20} className="mx-auto" />
-          </Button>
+          </CalcKey>
+          <CalcKey onClick={inputDecimal} title="Decimal Point" aria-label="Decimal point">.</CalcKey>
+          <CalcKey variant="equals" onClick={calculate} title="Equals" aria-label="Equals">
+            =
+          </CalcKey>
 
-          {/* Row 6: 0 and Decimal */}
-          <Button 
-            onClick={() => inputDigit('0')}
-            variant="outline"
-            className="col-span-3 p-4 text-xl font-light"
+          <CalcKey onClick={() => inputDigit('1')}>1</CalcKey>
+          <CalcKey onClick={() => inputDigit('2')}>2</CalcKey>
+          <CalcKey onClick={() => inputDigit('3')}>3</CalcKey>
+          <CalcKey onClick={() => inputDigit('0')}
+           
+            className="col-span-3"
           >
             0
-          </Button>
-          <Button onClick={inputDecimal} variant="outline" className="p-4 text-xl font-light" title="Decimal Point">.</Button>
-          <Button
-            onClick={calculate}
-            variant="secondary"
-            className="p-4 text-xl font-light"
-            title="Equals"
-          >
-            =
-          </Button>
+          </CalcKey>
         </div>
       </Card>
     </div>

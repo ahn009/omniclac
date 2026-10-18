@@ -2,8 +2,11 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Card, Input, RangeSlider, ResultDisplay, CardGrid, Button } from '../common/CommonComponents';
 
 // --- Gemini API Constants and Utilities ---
-const apiKey = "AIzaSyDoEa5ozUwNrmnrY9W6A3WDp6i-OdB2wKA";
-const model = 'gemini-2.5-flash-preview-09-2025';
+// The API key is intentionally NOT committed to source. Provide it via a
+// Vite env variable (see .env.example). The feature disables itself
+// gracefully when no key is configured.
+const apiKey: string | undefined = import.meta.env.VITE_GEMINI_API_KEY;
+const model = 'gemini-2.5-flash';
 
 interface AnalysisResult {
   text: string;
@@ -171,6 +174,12 @@ export const LoanCalculator: React.FC = () => {
       setAnalysisResult(null);
       return;
     }
+
+    if (!apiKey) {
+      setError("AI analysis is not configured. Add a Gemini API key via the VITE_GEMINI_API_KEY environment variable to enable this feature.");
+      setAnalysisResult(null);
+      return;
+    }
     
     setIsLoading(true);
     setError(null);
@@ -235,9 +244,10 @@ export const LoanCalculator: React.FC = () => {
       } else {
         setError("Analysis failed: Could not retrieve text from the model.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Gemini API Error:", err);
-      setError(`Failed to get analysis. Please check your network connection or try again later. Error: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(`Failed to get analysis. Please check your network connection or try again later. Error: ${message}`);
     } finally {
       setIsLoading(false);
     }
@@ -245,10 +255,10 @@ export const LoanCalculator: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <Card
-          title="Mortgage & Loan Calculator"
+          title="Loan Calculator"
           description="Estimate your monthly payments and total interest paid based on the loan principal, interest rate, and term."
           className="shadow-2xl border border-slate-200"
         >
@@ -361,10 +371,3 @@ export const LoanCalculator: React.FC = () => {
     </div>
   );
 };
-
-// Main App component
-export default function App() {
-  return (
-    <LoanCalculator />
-  );
-}

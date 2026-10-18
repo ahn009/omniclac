@@ -8,7 +8,9 @@ export const TipCalculator: React.FC = () => {
   const [tipPercentage, setTipPercentage] = useState<number>(15);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 
-  const bill = parseFloat(billAmount) || 0;
+  const rawBill = parseFloat(billAmount) || 0;
+  // Bill amounts are never negative — clamp rather than showing negative tips.
+  const bill = Math.max(0, rawBill);
   const tipAmount = (bill * tipPercentage) / 100;
   const totalAmount = bill + tipAmount;
   const perPerson = numberOfPeople > 0 ? totalAmount / numberOfPeople : 0;
@@ -52,24 +54,25 @@ export const TipCalculator: React.FC = () => {
               min="0"
               step="0.01"
               value={billAmount}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBillAmount(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBillAmount(e.target.value.replace(/^-/, ''))}
               placeholder="100.00"
               icon={DollarSign}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-              Tip Percentage: <span className="font-bold text-slate-900 dark:text-slate-100">{tipPercentage}%</span>
+            <label htmlFor="tip-percentage" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+              Tip Percentage: <span className="font-bold text-slate-900 dark:text-slate-100 tnum">{tipPercentage}%</span>
             </label>
             <input
+              id="tip-percentage"
               type="range"
               min="0"
               max="100"
               step="1"
               value={tipPercentage}
               onChange={handleTipPercentageChange}
-              className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="slider-3d w-full cursor-pointer"
             />
             
             <div className="flex justify-between gap-2 mt-4">
